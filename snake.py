@@ -2,6 +2,7 @@ import turtle
 import random #We'll need this later in the lab
 
 turtle.tracer(1,0) #This helps the turtle move more smoothly
+turtle.bgcolor('magenta')
 
 SIZE_X=800
 SIZE_Y=500
@@ -11,7 +12,7 @@ turtle.penup()
 
 SQUARE_SIZE = 20
 START_LENGTH = 6
-TIME_STEP = 250
+TIME_STEP = 80
 
 #Initialize lists
 pos_list = []
@@ -21,21 +22,37 @@ food_stamps = []
 
 #Set up positions (x,y) of boxes that make up the snake
 snake = turtle.clone()
+#snake.register_shape('giphy.gif')
 snake.shape("square")
 
+snake.color('blue')
 #Hide the turtle object (it's an arrow - we don't need to see it)
 turtle.hideturtle()
 
 
+def score():
+    turtle.write('game is over bruh! :(', align = 'center'  , font = ('Arial' , 50 , 'normal'))
+    quit()
+
 def new_stamp():
-    snake_pos = snake.pos() #Get snake’s position
+    '''
+    old_head_pos = pos_list[-1]
+    snake.goto(old_head_pos[0],old_head_pos[1])
+    snake.shape('square')
+    '''
+    
+    snake_pos = snake.pos()
+   #Get snake’s position
     #Append the position tuple to pos_list
+    #snake.goto(snake_pos)
+        
     pos_list.append(snake_pos) 
     #snake.stamp() returns a stamp ID. Save it in some variable         
     stoto = snake.stamp()
     #append that stamp ID to stamp_list.     
     stamp_list.append(stoto)
-
+    #turtle.register('giphy.gif')
+    #snake.shape('giphy gif')
     
 
 #Draw a snake at the start of the game with a for loop
@@ -54,6 +71,9 @@ for i in range(START_LENGTH) :
     #Now draw the new snake part on the screen (hint, you have a 
     #function to do this
     new_stamp()
+
+turtle.register_shape('giphy.gif')
+snake.shape('giphy.gif')
 
 def remove_tail():
     old_stamp = stamp_list.pop(0) # last piece of tail
@@ -76,7 +96,7 @@ turtle.onkeypress(up, "Up") # Create listener for up key
 def right():
     snake.direction = 'Right'
    # move_snake()
-    print('you pressed the right key')
+    
 
 turtle.onkeypress(right, 'Right')
 def left():
@@ -102,13 +122,13 @@ turtle.onkeypress(down, 'Down')
 
 turtle.listen()
 
-turtle.register_shape("trash.gif") #Add trash picture
+turtle.register_shape("hmbrgr.gif") #Add trash picture
                       # Make sure you have downloaded this shape 
                       # from the Google Drive folder and saved it
                       # in the same folder as this Python script
 
 food = turtle.clone()
-food.shape("trash.gif") 
+food.shape("hmbrgr.gif") 
 
 #Locations of food
 food_pos = [(100,100), (-100,100), (-100,-100), (100,-100)]
@@ -144,7 +164,7 @@ def make_food():
     food.goto(food_x, food_y)
     
         ##2.WRITE YOUR CODE HERE: Add the food turtle's position to the food positions list
-    food_pos.append(food.pos)
+    food_pos.append(food.pos())
         ##3.WRITE YOUR CODE HERE: Add the food turtle's stamp to the food stamps list
     food_stamps.append(food.stamp())
     
@@ -157,17 +177,17 @@ def move_snake():
     # right edge.
     if x_pos >= RIGHT_EDGE:
          print("You hit the right edge! Game over!")
-         quit()
+         score()
     if x_pos <= LEFT_EDGE:
         print('you hit the left edge! Game over!')
-        quit()
+        score()
     if y_pos >= UP_EDGE:
         print('you hit the up edge! Game over!')
-        quit()
+        score()
     if y_pos <= DOWN_EDGE:
         print('you hit the  down edge! Game over!')
-        quit()
-
+        score()
+    
 
 
     #If snake.direction is up, then we want the snake to change
@@ -195,7 +215,11 @@ def move_snake():
         food_pos.pop(food_index) #Remove eaten food position
         food_stamps.pop(food_index) #Remove eaten food stamp
         print("You have eaten the food!")
-    
+
+        new_stamp()
+
+    elif snake.pos() in pos_list[0:-1]:
+        score()
     #HINT: This if statement may be useful for Part 8
 
     #Don't change the rest of the code in move_snake() function:
@@ -203,6 +227,7 @@ def move_snake():
     #automatically, the function should finish as before with a 
     #call to ontimer()
     if len(food_stamps) <= 6 :
+        
         make_food()
        
 
